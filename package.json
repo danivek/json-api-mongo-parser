@@ -1,0 +1,38 @@
+{
+  "name": "json-api-mongo-parser",
+  "version": "0.1.0",
+  "description": "JSON API query parser for MongoDB/Mongoose queries.",
+  "main": "index.js",
+  "scripts": {
+    "lint": "./node_modules/.bin/eslint .",
+    "test": "./node_modules/.bin/istanbul cover --print both ./node_modules/mocha/bin/_mocha -- -R spec ./test/**/*.js",
+    "coveralls": "cat ./coverage/lcov.info | node ./node_modules/coveralls/bin/coveralls.js"
+  },
+  "keywords": [
+    "json",
+    "json-api",
+    "jsonapi",
+    "json api",
+    "mongo",
+    "mongoose",
+    "MongoDB",
+    "parser"
+  ],
+  "author": "Kévin Danielo",
+  "repository": "danivek/json-api-mongo-parser",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 4.0.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "coveralls": "^2.11.8",
+    "eslint": "^1.10.3",
+    "eslint-config-airbnb": "^5.0.0",
+    "istanbul": "^0.4.2",
+    "mocha": "^2.4.5"
+  },
+  "dependencies": {
+    "lodash": "^4.5.1"
+  }
+}

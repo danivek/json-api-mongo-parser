@@ -24,3 +24,4 @@ json-api-mongo-parser only use ECMAScript 2015 (ES6) features supported natively
 ## License
 
 [MIT](https://github.com/danivek/json-api-mongo-parser/blob/master/LICENSE)
+

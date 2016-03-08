@@ -10,6 +10,18 @@ describe('JSONAPIMongoParser', function() {
   let parser = new JSONAPIMongoParser();
 
   describe('parseFields', function() {
+    it('should return undefined if fields query is null', function(done) {
+      const select = parser.parseFields('article', null);
+      expect(select).to.be.undefined;
+      done();
+    });
+
+    it('should return undefined if fields query is empty', function(done) {
+      const select = parser.parseFields('article', {});
+      expect(select).to.be.undefined;
+      done();
+    });
+
     it('should parse input fields array', function(done) {
       const fieldsQuery = {
         article: ['title', 'body']
@@ -58,6 +70,12 @@ describe('JSONAPIMongoParser', function() {
   });
 
   describe('parseSort', function() {
+    it('should return undefined if sort query is null', function(done) {
+      const sort = parser.parseSort(null);
+      expect(sort).to.be.undefined;
+      done();
+    });
+
     it('should parse input sort array', function(done) {
       const sortQuery = ['-title', 'body', '+created'];
       const sort = parser.parseSort(sortQuery);
@@ -82,6 +100,18 @@ describe('JSONAPIMongoParser', function() {
   });
 
   describe('parsePage', function() {
+    it('should return undefined if page query is null', function(done) {
+      const page = parser.parsePage(null);
+      expect(page).to.be.undefined;
+      done();
+    });
+
+    it('should return undefined if page query is empty', function(done) {
+      const page = parser.parsePage({});
+      expect(page).to.be.undefined;
+      done();
+    });
+
     it('should parse page query with page number and page size', function(done) {
       const pageQuery = {
         number: 2,
@@ -110,6 +140,12 @@ describe('JSONAPIMongoParser', function() {
   });
 
   describe('parseInclude', function() {
+    it('should return undefined if include query is null', function(done) {
+      const populate = parser.parseInclude('article', null);
+      expect(populate).to.be.undefined;
+      done();
+    });
+
     it('should ignore include if no resources type are registered', function(done) {
       const includeQuery = ['author'];
       const populate = parser.parseInclude('article', includeQuery);

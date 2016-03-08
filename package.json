@@ -1,6 +1,6 @@
 {
   "name": "json-api-mongo-parser",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "JSON API query parser for MongoDB/Mongoose queries.",
   "main": "index.js",
   "scripts": {

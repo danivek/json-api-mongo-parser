@@ -4,7 +4,7 @@
 
 JSON API query parser for MongoDB/Mongoose queries.
 
-WIP
+Convert query object from any querystring parser to MongoDB/Mongoose queries.
 
 ## Installation
 ```bash
@@ -13,9 +13,99 @@ npm install --save json-api-mongo-parser
 
 ## Usage
 
-Some examples are available in [ tests folders](https://github.com/danivek/json-api-mongo-parser/blob/master/test/)
+```javascript
+// Input query object for the article resource
+var query = {
+  fields: {
+    article: 'title,body', // Can be comma delimited string or Array of string
+    people: 'firstname,lastname',
+    comment: 'title,body'
+  },
+  sort: '-title,body,+created', // Can be comma delimited string or Array of string
+  page: {
+    offset: 2,
+    limit: 10
+  },
+  include: 'author,comments.tag,comments.author,comments.author.tag' // Can be comma delimited string or Array of string
+}
+```
 
-More examples are coming soon.
+```javascript
+var JSONAPIMongoParser = require(json-api-mongo-parser);
+
+var jsonApiMongoParser = new JSONAPIMongoParser({
+  article: {
+    relationships: { // Declaring relationships with its type
+      author: 'people',
+      comments: 'comment',
+    }
+  },
+  comment: {
+    relationships: {
+      author: 'people',
+      tag: 'tag'
+    }
+  },
+  people: {
+    relationships: {
+      tag: 'tag'
+    }
+  }
+});
+
+// Parse
+jsonApiMongoParser.parse('article', query);
+```
+Output mongo query for the article resource :
+
+```javascript
+{
+  select: {
+    title: 1,
+    body: 1,
+    author: 1,
+    comments: 1
+  },
+  sort: {
+    title: -1,
+    body: 1,
+    created: 1
+  },
+  page: {
+    skip: 2,
+    limit: 10
+  },
+  populate: [{
+    path: 'author',
+    select: {
+      firstname: 1,
+      lastname: 1,
+      tag: 1
+    }
+  }, {
+    path: 'comments',
+    populate: [{
+      path: 'tag'
+    }, {
+      path: 'author',
+      populate: [{
+        path: 'tag'
+      }],
+      select: {
+        firstname: 1,
+        lastname: 1,
+        tag: 1
+      }
+    }],
+    select: {
+      title: 1,
+      body: 1,
+      author: 1,
+      tag: 1
+    }
+  }]
+}
+```
 
 ## Requirements
 
@@ -24,4 +114,3 @@ json-api-mongo-parser only use ECMAScript 2015 (ES6) features supported natively
 ## License
 
 [MIT](https://github.com/danivek/json-api-mongo-parser/blob/master/LICENSE)
-

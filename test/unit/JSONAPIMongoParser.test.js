@@ -10,9 +10,21 @@ describe('JSONAPIMongoParser', function() {
   let parser = new JSONAPIMongoParser();
 
   describe('parseFields', function() {
-    it('should parse fields query for a resource', function(done) {
+    it('should parse input fields array', function(done) {
       const fieldsQuery = {
         article: ['title', 'body']
+      };
+      const select = parser.parseFields('article', fieldsQuery);
+      expect(select).to.eql({
+        title: 1,
+        body: 1
+      });
+      done();
+    });
+
+    it('should parse input fields string', function(done) {
+      const fieldsQuery = {
+        article: 'title,body'
       };
       const select = parser.parseFields('article', fieldsQuery);
       expect(select).to.eql({
@@ -46,8 +58,19 @@ describe('JSONAPIMongoParser', function() {
   });
 
   describe('parseSort', function() {
-    it('should parse sort query', function(done) {
+    it('should parse input sort array', function(done) {
       const sortQuery = ['-title', 'body', '+created'];
+      const sort = parser.parseSort(sortQuery);
+      expect(sort).to.eql({
+        title: -1,
+        body: 1,
+        created: 1
+      });
+      done();
+    });
+
+    it('should parse input sort string', function(done) {
+      const sortQuery = '-title,body,+created';
       const sort = parser.parseSort(sortQuery);
       expect(sort).to.eql({
         title: -1,
@@ -119,7 +142,7 @@ describe('JSONAPIMongoParser', function() {
       done();
     });
 
-    it('should parse all include query', function(done) {
+    it('should parse input include array', function(done) {
       const parserAllInclude = new JSONAPIMongoParser({
         article: {
           relationships: {
@@ -141,6 +164,45 @@ describe('JSONAPIMongoParser', function() {
         tag: {}
       });
       const includeQuery = ['author', 'comments.tag', 'comments.author', 'comments.author.tag'];
+      const populate = parserAllInclude.parseInclude('article', includeQuery);
+      expect(populate).to.eql([{
+        path: "author"
+      }, {
+        path: "comments",
+        populate: [{
+          path: 'tag'
+        }, {
+          path: "author",
+          populate: [{
+            path: "tag"
+          }]
+        }]
+      }])
+      done();
+    });
+
+    it('should parse input include string', function(done) {
+      const parserAllInclude = new JSONAPIMongoParser({
+        article: {
+          relationships: {
+            author: 'people',
+            comments: 'comment',
+          }
+        },
+        comment: {
+          relationships: {
+            author: 'people',
+            tag: 'tag'
+          }
+        },
+        people: {
+          relationships: {
+            tag: 'tag'
+          }
+        },
+        tag: {}
+      });
+      const includeQuery = 'author,comments.tag,comments.author,comments.author.tag';
       const populate = parserAllInclude.parseInclude('article', includeQuery);
       expect(populate).to.eql([{
         path: "author"
@@ -245,16 +307,16 @@ describe('JSONAPIMongoParser', function() {
 
       const query = {
         fields: {
-          article: ['title', 'body'],
-          people: ['firstname', 'lastname'],
-          comment: ['title', 'body']
+          article: 'title,body',
+          people: 'firstname,lastname',
+          comment: 'title,body'
         },
-        sort: ['-title', 'body', '+created'],
+        sort: '-title,body,+created',
         page: {
           offset: 2,
           limit: 10
         },
-        include: ['author', 'comments.tag', 'comments.author', 'comments.author.tag']
+        include: 'author,comments.tag,comments.author,comments.author.tag'
       }
       const parseQuery = jsonApiMongoParser.parse('article', query);
       expect(parseQuery).to.eql({

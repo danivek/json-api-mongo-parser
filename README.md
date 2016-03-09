@@ -36,8 +36,13 @@ var JSONAPIMongoParser = require(json-api-mongo-parser);
 var jsonApiMongoParser = new JSONAPIMongoParser({
   article: {
     relationships: { // Declaring relationships with its type
-      author: 'people',
-      comments: 'comment',
+      author: 'people', // can be a string
+      comments: { // Or an object with extra options for population query
+        type : 'comment',
+        options: {
+          lean: true
+        }
+      },
     }
   },
   comment: {

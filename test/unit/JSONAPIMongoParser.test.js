@@ -325,7 +325,12 @@ describe('JSONAPIMongoParser', function() {
         article: {
           relationships: {
             author: 'people',
-            comments: 'comment',
+            comments: {
+              type: 'comment',
+              options: {
+                lean: true
+              }
+            },
           }
         },
         comment: {
@@ -398,6 +403,9 @@ describe('JSONAPIMongoParser', function() {
             body: 1,
             author: 1,
             tag: 1
+          },
+          options: {
+            lean: true
           }
         }]
       });

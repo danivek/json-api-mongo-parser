@@ -107,6 +107,9 @@ Output mongo query for the article resource :
       body: 1,
       author: 1,
       tag: 1
+    },
+    options: {
+      lean: true
     }
   }]
 }
